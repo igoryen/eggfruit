@@ -32,7 +32,7 @@ $query2 = "SELECT * FROM tbl_entry WHERE ent_response_date IS NOT NULL";
 $result2 = $dbHelper->executeQuery($query2);
 $fails = mysqli_num_rows($result2);
 
-
+$percent_success = round(100 - (($fails/$applies)*100), 1);
 //$num_rows2 = mysqli_num_rows($result2);
 //$fails = $num_rows2[0];
 //$fails = $row[0];
@@ -155,8 +155,9 @@ function applications($entries) {
       <h2><img src="Egg-fruit.jpg" height="60"> Eggfruit</h2>
 
       <div id="stat">
-        Applied to <?php print $applies; ?></br>
-        Rejected by <?php print $fails; ?>
+        Applied to <?php print $applies; ?>. 
+        Rejected by <?php print $fails; ?> (Success rate: <?php 
+          print $percent_success; ?>%)
       </div>
       <div id="display_pane">
         <?php
