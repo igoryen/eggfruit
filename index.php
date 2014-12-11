@@ -59,12 +59,15 @@ while ($row = mysqli_fetch_assoc($result)) {
 echo count($entries) . " entries<br>";
 
 function applications($entries) {
+  print "<div class='applic_table'>";
   //$bag = "";
   // for each [AE of array] $entries [named] as [variable] $entry
   foreach ($entries as $entry) {
+    
     $closing_span_tag = '';
     $bag = "";
-
+    
+    
     // if HAVE response date
     if (null !== $entry->getResponseDate()) {
       // do not cross out the row
@@ -77,8 +80,16 @@ function applications($entries) {
     else {
       $class = "<div class='row'>";
     }
+    
     $bag .= $class;
+    
+    // date
+    $bag .= '<div class="applic_table_date_cell">';
     $bag .= $entry->getAppliedDate() . " ";
+    $bag .= '</div>';
+    
+    // company
+    $bag .= '<div class="applic_table_cell">';
     if(!null == $entry->getCompanyUrl()){
       $bag .= "<a href='" . $entry->getCompanyUrl() . "' target='_blank'>";
       $bag .= "<b>" . $entry->getCompanyName() . "</b>";
@@ -87,8 +98,10 @@ function applications($entries) {
     else{
       $bag .= "<b>" . $entry->getCompanyName() . "</b>";
     }
+    $bag .= '</div>';
     
-    $bag .= " :: ";
+    // position
+    $bag .= '<div class="applic_table_cell">';
     if(!null == $entry->getJobPostingUrl()){
       $bag .= "<a href='" . $entry->getJobPostingUrl() . "' target='_blank'>";
       $bag .= $entry->getPositionName() . "</a> ";
@@ -96,20 +109,35 @@ function applications($entries) {
     else{
       $bag .= $entry->getPositionName() . " ";
     }
+    $bag .= '</div>';
     
+    // interview date
+    $bag .= '<div class="applic_table_ivdate_cell">';
     if ($entry->getInterviewDate() !== "0000-00-00") {
-      $bag .= " :: <b> interview: " . $entry->getInterviewDate() . "</b> :: ";
+      $bag .= "<b>" . $entry->getInterviewDate() . "</b>";
     }
+    $bag .= '</div>';
+    
+    // response date
+    $bag .= '<div class="applic_table_response_cell">';
     $bag .= "<i>" . $entry->getResponseDate() . "</i>";
-    if (null !== $entry->getResponseValue()) {
-      $bag .= " (<i>" . $entry->getResponseValue() . "</i>)";
-    }
-
+    $bag .= '</div>';
+    
+    // response value
+    $bag .= '<div class="applic_table_cell">';
+    $bag .= "<i>" . $entry->getResponseValue() . "</i>";
+    $bag .= '</div><!-- end of what? -->';
+    
     $bag .= $closing_span_tag;
-    $bag .= "</div>";
+    $bag .= "</div><!-- end of row-->";
+    
+    
+    
     print $bag;
+    
   } // foreach()
-
+  
+  print "</table>";
 }
 
 // terms()

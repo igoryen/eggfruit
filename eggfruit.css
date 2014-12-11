@@ -1,13 +1,17 @@
 body{
-  font-family: sans-serif, Calibri;
+  //font-family: sans-serif, Calibri;
+  font-family: serif "Georgia";
 }
 .desktop{
   margin-left: 200px;
   margin-right: 200px;
 }
 .crossed_row{
-  text-decoration: line-through;
+  display: table-row;
   background-color: lightgray;
+  padding-bottom: 3px;
+  border-style: solid;
+    border-color: #0000ff;
 }
 img{
   /*         [direction (inset)] [color] [Horizontal Distance] [Vertical Distance] [size]; 
@@ -15,5 +19,25 @@ img{
   box-shadow: rgba(0,0,0,0.2) 0px 2px 3px, inset rgba(0,0,0,0.2) 0px -1px 2px;
 }
 .row{
-  /*border-bottom: solid 1px gray;*/
+  display: table-row;
+  padding-bottom: 3px;
+  border-style: solid;
+    border-color: #0000ff;
+}
+.applic_table_cell{
+  display: table-cell;
+}
+.applic_table_date_cell{
+  display: table-cell;
+  width: 100px;
+  color: red;
+}
+.applic_table_ivdate_cell{
+  display: table-cell;
+  width: 100px;
+  color: red;
+}
+.applic_table_response_cell{
+  display: table-cell;
+  width: 100px;
 }
