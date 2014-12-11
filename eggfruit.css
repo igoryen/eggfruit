@@ -1,0 +1,19 @@
+body{
+  font-family: sans-serif, Calibri;
+}
+.desktop{
+  margin-left: 200px;
+  margin-right: 200px;
+}
+.crossed_row{
+  text-decoration: line-through;
+  background-color: lightgray;
+}
+img{
+  /*         [direction (inset)] [color] [Horizontal Distance] [Vertical Distance] [size]; 
+*/
+  box-shadow: rgba(0,0,0,0.2) 0px 2px 3px, inset rgba(0,0,0,0.2) 0px -1px 2px;
+}
+.row{
+  /*border-bottom: solid 1px gray;*/
+}
