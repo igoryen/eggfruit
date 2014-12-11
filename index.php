@@ -79,12 +79,24 @@ function applications($entries) {
     }
     $bag .= $class;
     $bag .= $entry->getAppliedDate() . " ";
-    $bag .= "<a href='" . $entry->getCompanyUrl() . "' target='_blank'>";
-    $bag .= "<b>" . $entry->getCompanyName() . "</b>";
-    $bag .= "</a>";
+    if(!null == $entry->getCompanyUrl()){
+      $bag .= "<a href='" . $entry->getCompanyUrl() . "' target='_blank'>";
+      $bag .= "<b>" . $entry->getCompanyName() . "</b>";
+      $bag .= "</a>";
+    }
+    else{
+      $bag .= "<b>" . $entry->getCompanyName() . "</b>";
+    }
+    
     $bag .= " :: ";
-    $bag .= "<a href='" . $entry->getJobPostingUrl() . "' target='_blank'>";
-    $bag .= $entry->getPositionName() . "</a> ";
+    if(!null == $entry->getJobPostingUrl()){
+      $bag .= "<a href='" . $entry->getJobPostingUrl() . "' target='_blank'>";
+      $bag .= $entry->getPositionName() . "</a> ";
+    }
+    else{
+      $bag .= $entry->getPositionName() . " ";
+    }
+    
     if ($entry->getInterviewDate() !== "0000-00-00") {
       $bag .= " :: <b> interview: " . $entry->getInterviewDate() . "</b> :: ";
     }
