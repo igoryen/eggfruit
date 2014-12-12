@@ -112,20 +112,24 @@ function applications($entries) {
     $bag .= '</div>';
     
     // interview date
-    $bag .= '<div class="applic_table_ivdate_cell">';
+    $bag .= '<div class="applic_table_cell">';
     if ($entry->getInterviewDate() !== "0000-00-00") {
-      $bag .= "<b>" . $entry->getInterviewDate() . "</b>";
+      $bag .= '<span title="'.$entry->getInterviewDate(). '">- Int - </span>';
     }
     $bag .= '</div>';
     
     // response date
-    $bag .= '<div class="applic_table_response_cell">';
-    $bag .= "<i>" . $entry->getResponseDate() . "</i>";
+    $bag .= '<div class="applic_table_cell">';
+    if(!null == $entry->getResponseDate()){
+      $bag .= '<span title="' . $entry->getResponseDate() .'"> - R - </span>';
+    }    
     $bag .= '</div>';
     
     // response value
     $bag .= '<div class="applic_table_cell">';
-    $bag .= "<i>" . $entry->getResponseValue() . "</i>";
+    if(!null == $entry->getResponseValue()){
+      $bag .= '<span title="' . $entry->getResponseValue() .'"> - A - </span>';
+    }
     $bag .= '</div><!-- end of what? -->';
     
     $bag .= $closing_span_tag;
