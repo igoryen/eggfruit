@@ -19,7 +19,7 @@ $dbHelper = new DBHelper();
 //$num_rows = mysql_num_rows($result);
 //echo "$num_rows Rows\n";
 //=============================
-
+date_default_timezone_set('America/Toronto');
 
 $query = "SELECT * FROM tbl_entry ORDER BY ent_company_name ASC";
 //$query = "SELECT * FROM tbl_entry ORDER BY ent_position_name ASC";
@@ -28,7 +28,9 @@ $result = $dbHelper->executeQuery($query);
 $applies = mysqli_num_rows($result);
 
 
-$query2 = "SELECT * FROM tbl_entry WHERE ent_response_date IS NOT NULL";
+$query2 = "SELECT * FROM `tbl_entry` "
+        . "WHERE DATEDIFF(NOW(), `ent_applied_date`) > 60 "
+        . "ORDER BY `ent_entry_id` DESC";
 $result2 = $dbHelper->executeQuery($query2);
 $fails = mysqli_num_rows($result2);
 
@@ -66,10 +68,16 @@ function applications($entries) {
     
     $closing_span_tag = '';
     $bag = "";
+
+    $date_today = date_create(date("Y-m-d"));
+    // 2    
+    $date_apply = date_create($entry->getAppliedDate());
+    // 3
     
-    
+    $time_since = date_diff($date_today, $date_apply);
+    // 4
     // if HAVE response date
-    if (null !== $entry->getResponseDate()) {
+    if (null !== $entry->getResponseDate() || $time_since->days > 60) { // 1
       // do not cross out the row
       $class = "<div class='crossed_row'>";
       //$bag .= "response date is set!";
