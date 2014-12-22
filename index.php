@@ -21,7 +21,7 @@ $dbHelper = new DBHelper();
 //=============================
 
 
-$query = "SELECT * FROM tbl_entry ORDER BY ent_applied_date DESC";
+$query = "SELECT * FROM tbl_entry ORDER BY ent_company_name ASC";
 //$query = "SELECT * FROM tbl_entry ORDER BY ent_position_name ASC";
 // TRUE (if INSERT succeeded) or FALSE (if failed)
 $result = $dbHelper->executeQuery($query);
