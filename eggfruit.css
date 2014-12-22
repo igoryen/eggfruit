@@ -11,7 +11,9 @@ body{
   background-color: lightgray;
   padding-bottom: 3px;
   border-style: solid;
-    border-color: #0000ff;
+  border-color: #0000ff;
+  color: gray;
+  font-style: italic;
 }
 img{
   /*         [direction (inset)] [color] [Horizontal Distance] [Vertical Distance] [size]; 
