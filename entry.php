@@ -9,6 +9,7 @@ class Entry{
   private $interview_date;
   private $response_date;
   private $response_value; // 65
+  private $accepted;
   /* ----------------------------------
     functions for class Entry
     --------------------------------- */
@@ -80,6 +81,25 @@ class Entry{
   }
   public function setResponseValue($x){
     $this->response_value = $x;
+  }
+  //-----------------------
+  public function getAccepted(){
+    return $this->accepted;
+  }
+  public function setAccepted($x){
+    $this->accepted = $x;
+  }
+
+  public function isAccepted($id){
+    $dbHelper = new DBHelper();
+    date_default_timezone_set('America/Toronto');
+    $sql = "SELECT accepted FROM eggfruit.entry WHERE id = " . $id . ";";
+    $result = $dbHelper->executeQuery($sql);
+    while ($row = mysqli_fetch_assoc($result)) {
+      $status = $row["accepted"];
+    }
+    // var_dump($status);
+    return $status;
   }
   
 } // class ENtry

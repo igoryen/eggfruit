@@ -1,6 +1,8 @@
 body{
-  //font-family: sans-serif, Calibri;
-  font-family: serif "Georgia";
+  /*font-family: sans-serif, Calibri;*/
+  /*font-family: "Georgia" , serif ;*/
+  font-family: "Verdana", sans-serif;
+  font-size: small;
 }
 .desktop{
   margin-left: 50px;

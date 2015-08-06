@@ -21,16 +21,24 @@ $dbHelper = new DBHelper();
 //=============================
 date_default_timezone_set('America/Toronto');
 
-$query = "SELECT * FROM tbl_entry ORDER BY ent_company_name ASC";
+$query = "SELECT * FROM entry ORDER BY company_name ASC";
 //$query = "SELECT * FROM tbl_entry ORDER BY ent_position_name ASC";
 // TRUE (if INSERT succeeded) or FALSE (if failed)
 $result = $dbHelper->executeQuery($query);
 $applies = mysqli_num_rows($result);
 
-
-$query2 = "SELECT * FROM `tbl_entry` "
-        . "WHERE DATEDIFF(NOW(), `ent_applied_date`) > 60 "
-        . "ORDER BY `ent_entry_id` DESC";
+/*--------------------------------------------------------
+| SUCCESS RATE
+| Calculate success rate based on no-reply from a company 
+| in more than 60 days or rejected.
+| In other words, if there was no reply from a company in 
+| 60 days or the reply was a NO classify that application as a fail.
+*/
+$query2 = "SELECT * FROM `entry` "
+        //. "WHERE DATEDIFF(NOW(), `applied_date`) > 60 "
+        . "WHERE (accepted = '0') OR (DATEDIFF(NOW(), `applied_date`) > 60 ) "
+        . "ORDER BY applied_date DESC";
+//echo $query2;
 $result2 = $dbHelper->executeQuery($query2);
 $fails = mysqli_num_rows($result2);
 
@@ -39,6 +47,8 @@ $percent_success = round(100 - (($fails/$applies)*100), 1);
 //$fails = $num_rows2[0];
 //$fails = $row[0];
 //$last_inserted_id = mysql_insert_id();
+
+
 //create an array of Entry objects
 $entries[] = new Entry();
 // while there is a remaining row
@@ -46,19 +56,28 @@ while ($row = mysqli_fetch_assoc($result)) {
   // create an Entry object
   $entry = new Entry();
   // populate it 
-  $entry->setCompanyName($row['ent_company_name']);
-  $entry->setCompanyUrl($row['ent_company_url']);
-  $entry->setAppliedDate($row['ent_applied_date']);
-  $entry->setPositionName($row['ent_position_name']);
-  $entry->setJobPostingUrl($row['ent_job_posting_url']);
-  $entry->setInterviewDate($row['ent_interview_date']);
-  $entry->setResponseDate($row['ent_response_date']);
-  $entry->setResponseValue($row['ent_response_value']);
+  $entry->setEntryId($row['id']);
+  $entry->setCompanyName($row['company_name']);
+  $entry->setCompanyUrl($row['company_url']);
+  $entry->setAppliedDate($row['applied_date']);
+  $entry->setPositionName($row['position_name']);
+  $entry->setJobPostingUrl($row['job_posting_url']);
+  $entry->setInterviewDate($row['interview_date']);
+  $entry->setResponseDate($row['response_date']);
+  $entry->setResponseValue($row['response_value']);
+  $entry->setAccepted($row['accepted']);
   // push the Entry object into the array
   array_push($entries, $entry);
 }
 // get AEN
 echo count($entries) . " entries<br>";
+
+
+// $status = Entry::isAccepted(3);
+// echo $status;
+
+
+
 
 function applications($entries) {
   print "<div class='applic_table'>";
@@ -76,8 +95,14 @@ function applications($entries) {
     
     $time_since = date_diff($date_today, $date_apply);
     // 4
-    // if HAVE response date
-    if (null !== $entry->getResponseDate() || $time_since->days > 60) { // 1
+    /*-----------------------------------------------------------
+    | CONDITIONS
+    | Condition 1: status is null (neither accepted nor rejected)
+    | Condition 2: status is 1 (accepted)
+    | Condition 3: status is 0 (rejected) or 60 days have passed
+    */
+    // condition 3
+    if ($entry->getAccepted() == '0' || $time_since->days > 60) { // 1
       // do not cross out the row
       $class = "<div class='crossed_row'>";
       //$bag .= "response date is set!";
@@ -85,9 +110,11 @@ function applications($entries) {
       //$bag .= "<span class='crossout'>";
       //$closing_span_tag = '</span> ';
     }
-    else {
+    // condition 1
+    elseif ($entry->getAccepted() == null) {
       $class = "<div class='row'>";
     }
+
     
     $bag .= $class;
     
@@ -96,7 +123,11 @@ function applications($entries) {
     $bag .= $entry->getAppliedDate() . " ";
     $bag .= '</div>';
     
-    // company
+    /*-----------------------------------------------------------
+    | COMPANY
+    | If the DB has company URL then use it, otherwise just print
+    | the name of the company
+    */
     $bag .= '<div class="applic_table_cell">';
     if(!null == $entry->getCompanyUrl()){
       $bag .= "<a href='" . $entry->getCompanyUrl() . "' target='_blank'>";
@@ -108,7 +139,11 @@ function applications($entries) {
     }
     $bag .= '</div>';
     
-    // position
+    /*-----------------------------------------------------------
+    | POSITION
+    | If the DB has posting URL for the position then use it, 
+    | otherwise just print the name of the position
+    */
     $bag .= '<div class="applic_table_cell">';
     if(!null == $entry->getJobPostingUrl()){
       $bag .= "<a href='" . $entry->getJobPostingUrl() . "' target='_blank'>";
@@ -119,31 +154,41 @@ function applications($entries) {
     }
     $bag .= '</div>';
     
-    // interview date
+    /*-----------------------------------------------------------
+    | INTERVIEW
+    | If the DB has interview date for the position then use it, 
+    | otherwise don't print anything
+    */
     $bag .= '<div class="applic_table_cell">';
-    if ($entry->getInterviewDate() !== "0000-00-00") {
+    if ($entry->getInterviewDate() != null) {
       $bag .= '<span title="'.$entry->getInterviewDate(). '">- Int - </span>';
     }
     $bag .= '</div>';
     
-    // response date
+    /*-----------------------------------------------------------
+    | RESPONSE DATE
+    | If the DB has response date for the application then use it, 
+    | otherwise don't print anything
+    */
     $bag .= '<div class="applic_table_cell">';
     if(!null == $entry->getResponseDate()){
       $bag .= '<span title="' . $entry->getResponseDate() .'"> - R - </span>';
     }    
     $bag .= '</div>';
     
-    // response value
+    /*-----------------------------------------------------------
+    | RESPONSE VALUE
+    | If the DB has response value for the application then use it, 
+    | otherwise don't print anything
+    */
     $bag .= '<div class="applic_table_cell">';
     if(!null == $entry->getResponseValue()){
       $bag .= '<span title="' . $entry->getResponseValue() .'"> - A - </span>';
     }
     $bag .= '</div><!-- end of what? -->';
-    
+
     $bag .= $closing_span_tag;
     $bag .= "</div><!-- end of row-->";
-    
-    
     
     print $bag;
     
