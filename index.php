@@ -48,6 +48,20 @@ $percent_success = round(100 - (($fails/$applies)*100), 1);
 //$fails = $row[0];
 //$last_inserted_id = mysql_insert_id();
 
+/*--------------------------------------------------------
+| NUMBER OF APPLICATIONS BY DAY
+|
+*/
+$query3 = file_get_contents('sql/select/get_num_of_applications_by_date.sql');
+//  echo $query3;
+$result3 = $dbHelper->executeQuery($query3);
+
+$apps = [];
+while ($row = mysqli_fetch_assoc($result3)){
+  array_push($apps, $row["date"] . " - " . $row["occurences"]. "<br>");
+}
+
+
 
 //create an array of Entry objects
 $entries[] = new Entry();
@@ -70,7 +84,7 @@ while ($row = mysqli_fetch_assoc($result)) {
   array_push($entries, $entry);
 }
 // get AEN
-echo count($entries) . " entries<br>";
+$total_apps =  count($entries) . " entries<br>";
 
 
 // $status = Entry::isAccepted(3);
@@ -197,6 +211,8 @@ function applications($entries) {
   print "</table>";
 }
 
+
+
 // terms()
 ?>
 <!DOCTYPE html>
@@ -210,7 +226,14 @@ function applications($entries) {
   <body>
     <div class="desktop">
       <h2><img src="Egg-fruit.jpg" height="60"> Eggfruit</h2>
-
+      <div>
+        Sent out <?php echo $total_apps; ?><br>
+        <?php 
+          foreach($apps as $date){
+            echo $date;
+          }
+          ?>
+      </div>
       <div id="stat">
         Applied to <?php print $applies; ?>. 
         Rejected by <?php print $fails; ?> (Success rate: <?php 

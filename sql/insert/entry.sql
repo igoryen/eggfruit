@@ -24,3 +24,5 @@ SELECT count(*) FROM eggfruit.entry
         WHERE (accepted = '0') OR (DATEDIFF(NOW(), `applied_date`) > 4 )
         ORDER BY applied_date DESC;
 
+SELECT DISTINCT applied_date, count(*) AS occurences FROM  eggfruit.entry group by applied_date;
+
